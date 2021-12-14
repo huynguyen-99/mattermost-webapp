@@ -25,12 +25,9 @@ interface Props {
 }
 
 const EmojiPickerSearch = forwardRef(({filter, onChange, onKeyDown, userSkinTone, setUserSkinTone}: Props, ref?: React.Ref<HTMLInputElement>) => {
-    const handleSkinChange = useCallback(
-        (skin: string) => {
-            setUserSkinTone(skin);
-        },
-        [setUserSkinTone],
-    );
+    const handleSkinChange = useCallback((skin: string) => {
+        setUserSkinTone(skin);
+    }, [setUserSkinTone]);
 
     return (
         <div className='emoji-picker__search-container'>
