@@ -8,13 +8,7 @@ import OverlayTrigger from 'components/overlay_trigger';
 import Tooltip from 'components/tooltip';
 import {Constants} from 'utils/constants';
 
-type Category = {
-    name: string;
-    id: string;
-    className: string;
-    message: string;
-    offset: number;
-};
+import {Category} from '../constants';
 
 type Props = {
     intl: IntlShape;
