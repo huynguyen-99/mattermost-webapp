@@ -1,7 +1,13 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {ChangeEvent, forwardRef, KeyboardEvent} from 'react';
+import React, {
+    ChangeEvent,
+    forwardRef,
+    KeyboardEvent,
+    memo,
+    useCallback,
+} from 'react';
 import {FormattedMessage} from 'react-intl';
 
 import {t} from 'utils/i18n';
@@ -19,9 +25,12 @@ interface Props {
 }
 
 const EmojiPickerSearch = forwardRef(({filter, onChange, onKeyDown, userSkinTone, setUserSkinTone}: Props, ref?: React.Ref<HTMLInputElement>) => {
-    const handleSkinChange = (skin: string) => {
-        setUserSkinTone(skin);
-    };
+    const handleSkinChange = useCallback(
+        (skin: string) => {
+            setUserSkinTone(skin);
+        },
+        [setUserSkinTone],
+    );
 
     return (
         <div className='emoji-picker__search-container'>
@@ -61,4 +70,11 @@ const EmojiPickerSearch = forwardRef(({filter, onChange, onKeyDown, userSkinTone
 
 EmojiPickerSearch.displayName = 'EmojiPickerSearch';
 
-export default EmojiPickerSearch;
+function propsAreEqual(prevProps: Props, nextProps: Props) {
+    return (
+        prevProps.filter === nextProps.filter &&
+        prevProps.userSkinTone === nextProps.userSkinTone
+    );
+}
+
+export default memo(EmojiPickerSearch, propsAreEqual);
