@@ -24,7 +24,7 @@ interface Props {
     setUserSkinTone: (skinTone: string) => void;
 }
 
-const EmojiPickerSearch = forwardRef(({filter, onChange, onKeyDown, userSkinTone, setUserSkinTone}: Props, ref?: React.Ref<HTMLInputElement>) => {
+const EmojiPickerSearch = forwardRef<HTMLInputElement, Props>(({filter, onChange, onKeyDown, userSkinTone, setUserSkinTone}: Props, ref) => {
     const handleSkinChange = useCallback((skin: string) => {
         setUserSkinTone(skin);
     }, [setUserSkinTone]);

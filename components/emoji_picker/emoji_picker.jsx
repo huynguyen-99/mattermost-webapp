@@ -482,10 +482,6 @@ export default class EmojiPicker extends React.PureComponent {
         }
     }
 
-    onSkinSelected = (skin) => {
-        this.props.actions.setUserSkinTone(skin);
-    }
-
     getCategoryByIndex = (index) => {
         if (this.props.filter && index !== 0) {
             return null;
