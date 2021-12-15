@@ -3,7 +3,7 @@
 /* eslint-disable max-lines */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {StrictMode} from 'react';
 import {FormattedMessage} from 'react-intl';
 import throttle from 'lodash/throttle';
 
@@ -720,42 +720,45 @@ export default class EmojiPicker extends React.PureComponent {
 
     render() {
         return (
-            <div
-                className='emoji-picker__inner'
-                role='application'
-            >
+            <StrictMode>
                 <div
-                    aria-live='assertive'
-                    className='sr-only'
+                    className='emoji-picker__inner'
+                    role='application'
                 >
-                    <FormattedMessage
-                        id='emoji_picker_item.emoji_aria_label'
-                        defaultMessage='{emojiName} emoji'
-                        values={{
-                            emojiName: this.getCurrentEmojiName(),
-                        }}
+                    <div
+                        aria-live='assertive'
+                        className='sr-only'
+                    >
+                        <FormattedMessage
+                            id='emoji_picker_item.emoji_aria_label'
+                            defaultMessage='{emojiName} emoji'
+                            values={{
+                                emojiName: this.getCurrentEmojiName(),
+                            }}
+                        />
+                    </div>
+                    <EmojiPickerSearch
+                        ref={this.searchInputRef}
+                        filter={this.props.filter}
+                        userSkinTone={this.props.userSkinTone}
+                        onChange={this.handleFilterChange}
+                        onKeyDown={this.handleKeyDown}
+                        setUserSkinTone={this.props.actions.setUserSkinTone}
+                    />
+                    <EmojiPickerCategories
+                        recentEmojis={this.props.recentEmojis}
+                        filter={this.props.filter}
+                        onClick={this.handleCategoryClick}
+                        onKeyDown={this.handleCategoryKeyDown}
+                    />
+                    {this.emojiCurrentResults()}
+                    <EmojiPickerPreview
+                        emoji={this.getCurrentEmojiByCursor(this.state.cursor)}
+                        customEmojisEnabled={this.props.customEmojisEnabled}
+                        currentTeamName={this.props.currentTeamName}
                     />
                 </div>
-                <EmojiPickerSearch
-                    ref={this.searchInputRef}
-                    filter={this.props.filter}
-                    userSkinTone={this.props.userSkinTone}
-                    onChange={this.handleFilterChange}
-                    onKeyDown={this.handleKeyDown}
-                    setUserSkinTone={this.props.actions.setUserSkinTone}
-                />
-                <EmojiPickerCategories
-                    recentEmojis={this.props.recentEmojis}
-                    filter={this.props.filter}
-                    onClick={this.handleCategoryClick}
-                />
-                {this.emojiCurrentResults()}
-                <EmojiPickerPreview
-                    emoji={this.getCurrentEmojiByCursor(this.state.cursor)}
-                    customEmojisEnabled={this.props.customEmojisEnabled}
-                    currentTeamName={this.props.currentTeamName}
-                />
-            </div>
+            </StrictMode>
         );
     }
 }
