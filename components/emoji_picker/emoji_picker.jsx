@@ -366,7 +366,7 @@ export default class EmojiPicker extends React.PureComponent {
         }
     }
 
-    handleKeyDown = (e) => {
+    handleSearchKeyDown = (e) => {
         switch (e.key) {
         case 'ArrowRight':
             if ((this.state.cursor[0] !== -1 || this.state.cursor[1] !== -1) || e.target.selectionStart + 1 > this.props.filter.length) {
@@ -742,7 +742,7 @@ export default class EmojiPicker extends React.PureComponent {
                         filter={this.props.filter}
                         userSkinTone={this.props.userSkinTone}
                         onChange={this.handleFilterChange}
-                        onKeyDown={this.handleKeyDown}
+                        onKeyDown={this.handleSearchKeyDown}
                         setUserSkinTone={this.props.actions.setUserSkinTone}
                     />
                     <EmojiPickerCategories
