@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {injectIntl, IntlShape} from 'react-intl';
+import {injectIntl, WrappedComponentProps} from 'react-intl';
 import debounce from 'lodash/debounce';
 
 import {getEmojiImageUrl} from 'mattermost-redux/utils/emoji_utils';
@@ -24,8 +24,7 @@ type Props = {
     containerRef: HTMLDivElement;
     containerTop: number;
     containerBottom: number;
-    intl: IntlShape;
-}
+} & WrappedComponentProps;
 
 class EmojiPickerItem extends React.Component<Props> {
     private emojiItem: HTMLDivElement | undefined;

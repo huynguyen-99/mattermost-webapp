@@ -1,9 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+import {EmojiCategory} from 'mattermost-redux/types/emojis';
 
 import * as Emoji from 'utils/emoji.jsx';
 
-const categoryClass = new Map([
+import {Category, Categories} from '../types';
+
+const categoryClass: Map<EmojiCategory, string> = new Map([
     ['recent', 'icon-clock-outline'],
     ['searchResults', ''],
     ['smileys-emotion', 'icon-emoticon-happy-outline'],
@@ -18,15 +21,7 @@ const categoryClass = new Map([
     ['custom', 'icon-emoticon-custom-outline'],
 ]);
 
-export type Category = {
-    name: string;
-    id: string;
-    className: string;
-    message: string;
-    offset: number;
-};
-
-function createCategory(name: string): Category {
+function createCategory(name: EmojiCategory): Category {
     return {
         name,
         id: Emoji.CategoryTranslations.get(name),
@@ -36,13 +31,14 @@ function createCategory(name: string): Category {
     };
 }
 
-export const RECENT_EMOJI_CATEGORY = {recent: createCategory('recent')};
+export const RECENT_EMOJI_CATEGORY: Pick<Categories, 'recent'> = {recent: createCategory('recent')};
+export const SEARCH_EMOJI_CATEGORY: Pick<Categories, 'searchResults'> = {searchResults: createCategory('searchResults')};
 
-export const CATEGORIES: Record<string, Category> = Emoji.CategoryNames.
+export const CATEGORIES: Categories = Emoji.CategoryNames.
     filter((category) => !(category === 'recent' || category === 'searchResults')).
     reduce((previousCategory, currentCategory) => {
         return {
             ...previousCategory,
-            [currentCategory]: createCategory(currentCategory),
+            [currentCategory]: createCategory(currentCategory as EmojiCategory),
         };
-    }, {});
+    }, {} as Categories);

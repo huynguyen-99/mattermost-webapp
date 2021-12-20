@@ -8,7 +8,7 @@ import OverlayTrigger from 'components/overlay_trigger';
 import Tooltip from 'components/tooltip';
 import {Constants} from 'utils/constants';
 
-import {Category} from '../constants';
+import {Category} from '../types';
 
 type Props = {
     intl: IntlShape;

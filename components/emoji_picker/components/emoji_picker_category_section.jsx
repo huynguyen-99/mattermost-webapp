@@ -12,9 +12,15 @@ export default class EmojiPickerCategorySection extends React.PureComponent {
         updateCategoryOffset: PropTypes.func.isRequired,
     };
 
+    constructor() {
+        super();
+
+        this.ref = React.createRef();
+    }
+
     componentDidMount() {
         this.updateOffsetFrame = window.requestAnimationFrame(() => {
-            this.props.updateCategoryOffset(this.props.categoryName, this.div.offsetTop);
+            this.props.updateCategoryOffset(this.props.categoryName, this.ref.current.offsetTop);
         });
     }
 
@@ -24,14 +30,10 @@ export default class EmojiPickerCategorySection extends React.PureComponent {
         }
     }
 
-    divRef = (div) => {
-        this.div = div;
-    };
-
     render() {
         return (
             <div
-                ref={this.divRef}
+                ref={this.ref}
             >
                 <div className='emoji-picker-items__container'>
                     <div

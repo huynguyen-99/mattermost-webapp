@@ -1,27 +1,28 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 /* eslint-disable max-lines */
+/* eslint-disable react/prop-types */
 
-import PropTypes from 'prop-types';
 import React, {StrictMode} from 'react';
 import {FormattedMessage} from 'react-intl';
 import throttle from 'lodash/throttle';
 
-import * as Emoji from 'utils/emoji.jsx';
-import {compareEmojis} from 'utils/emoji_utils';
-import imgTrans from 'images/img_trans.gif';
-
-import {getSkin} from 'utils/emoticons';
-
-import NoResultsIndicator from 'components/no_results_indicator/no_results_indicator.tsx';
-
 import {NoResultsVariant} from 'components/no_results_indicator/types';
 
+import * as Emoji from 'utils/emoji.jsx';
+import {compareEmojis} from 'utils/emoji_utils';
+import {getSkin} from 'utils/emoticons';
+
+import imgTrans from 'images/img_trans.gif';
+
+import NoResultsIndicator from 'components/no_results_indicator';
+
 import EmojiPickerItem from './components/emoji_picker_item';
-import EmojiPickerCategorySection from './emoji_picker_category_section';
+import EmojiPickerCategorySection from './components/emoji_picker_category_section';
 import EmojiPickerPreview from './components/emoji_picker_preview';
 import EmojiPickerSearch from './components/emoji_picker_search';
 import EmojiPickerCategories from './components/emoji_picker_categories';
+import EmojiPickerCurrentResults from './components/emoji_picker_current_results';
 
 const CATEGORY_SEARCH_RESULTS = 'searchResults';
 
@@ -93,24 +94,24 @@ const EMOJIS_PER_PAGE = 200;
 const LOAD_MORE_AT_PIXELS_FROM_BOTTOM = 500;
 
 export default class EmojiPicker extends React.PureComponent {
-    static propTypes = {
-        onEmojiClick: PropTypes.func.isRequired,
-        customEmojisEnabled: PropTypes.bool,
-        emojiMap: PropTypes.object.isRequired,
-        recentEmojis: PropTypes.array.isRequired,
-        userSkinTone: PropTypes.string.isRequired,
-        customEmojiPage: PropTypes.number.isRequired,
-        visible: PropTypes.bool,
-        currentTeamName: PropTypes.string.isRequired,
-        actions: PropTypes.shape({
-            getCustomEmojis: PropTypes.func.isRequired,
-            searchCustomEmojis: PropTypes.func.isRequired,
-            incrementEmojiPickerPage: PropTypes.func.isRequired,
-            setUserSkinTone: PropTypes.func.isRequired,
-        }).isRequired,
-        filter: PropTypes.string.isRequired,
-        handleFilterChange: PropTypes.func.isRequired,
-    };
+    // static propTypes = {
+    //     onEmojiClick: PropTypes.func.isRequired,
+    //     customEmojisEnabled: PropTypes.bool,
+    //     emojiMap: PropTypes.object.isRequired,
+    //     recentEmojis: PropTypes.array.isRequired,
+    //     userSkinTone: PropTypes.string.isRequired,
+    //     customEmojiPage: PropTypes.number.isRequired,
+    //     visible: PropTypes.bool,
+    //     currentTeamName: PropTypes.string.isRequired,
+    //     actions: PropTypes.shape({
+    //         getCustomEmojis: PropTypes.func.isRequired,
+    //         searchCustomEmojis: PropTypes.func.isRequired,
+    //         incrementEmojiPickerPage: PropTypes.func.isRequired,
+    //         setUserSkinTone: PropTypes.func.isRequired,
+    //     }).isRequired,
+    //     filter: PropTypes.string.isRequired,
+    //     handleFilterChange: PropTypes.func.isRequired,
+    // };
 
     static defaultProps = {
         listHeight: 245,
@@ -193,6 +194,7 @@ export default class EmojiPicker extends React.PureComponent {
         };
 
         this.searchInputRef = React.createRef();
+        this.emojiPickerContainerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -211,8 +213,8 @@ export default class EmojiPicker extends React.PureComponent {
             });
         });
 
-        if (this.emojiPickerContainer) {
-            this.divHeight = this.emojiPickerContainer.offsetHeight;
+        if (this.emojiPickerContainerRef) {
+            this.divHeight = this.emojiPickerContainerRef.current.offsetHeight;
         }
 
         const rootComponent = document.getElementById('root');
@@ -289,11 +291,11 @@ export default class EmojiPicker extends React.PureComponent {
             this.searchInputRef.current.focus();
         }
 
-        if (!this.missingPages || !this.emojiPickerContainer) {
+        if (!this.missingPages || !this.emojiPickerContainerRef) {
             return;
         }
 
-        const pixelsFromBottom = this.emojiPickerContainer.scrollHeight - this.state.divTopOffset - this.emojiPickerContainer.clientHeight;
+        const pixelsFromBottom = this.emojiPickerContainerRef.current.scrollHeight - this.state.divTopOffset - this.emojiPickerContainerRef.current.clientHeight;
         if (pixelsFromBottom <= LOAD_MORE_AT_PIXELS_FROM_BOTTOM) {
             this.loadMoreCustomEmojis();
         }
@@ -302,9 +304,6 @@ export default class EmojiPicker extends React.PureComponent {
     lastVisibleEmojiRef = (lastVisibleEmoji) => {
         this.lastVisibleEmoji = lastVisibleEmoji;
     };
-    emojiPickerContainerRef = (emojiPickerContainer) => {
-        this.emojiPickerContainer = emojiPickerContainer;
-    };
 
     handleCategoryClick = (categoryName) => {
         this.setState({
@@ -312,7 +311,7 @@ export default class EmojiPicker extends React.PureComponent {
         });
         if (this.state.categories[categoryName]) {
             this.updateEmojisToShow(this.state.categories[categoryName].offset);
-            this.emojiPickerContainer.scrollTop = this.state.categories[categoryName].offset;
+            this.emojiPickerContainerRef.current.scrollTop = this.state.categories[categoryName].offset;
         }
     }
 
@@ -439,8 +438,8 @@ export default class EmojiPicker extends React.PureComponent {
     }
 
     handleScroll = () => {
-        if (this.emojiPickerContainer) {
-            this.updateEmojisToShow(this.emojiPickerContainer.scrollTop);
+        if (this.emojiPickerContainerRef) {
+            this.updateEmojisToShow(this.emojiPickerContainerRef.current.scrollTop);
         }
     }
 
@@ -571,6 +570,7 @@ export default class EmojiPicker extends React.PureComponent {
         }
 
         if (category.name === 'recent') {
+            console.log('recent', this.props.recentEmojis, this.state.categories.recent.emojiIds);
             const recentEmojiIds = this.state.categories?.recent?.emojiIds ?? [];
             if (recentEmojiIds.length === 0) {
                 return [];
@@ -632,13 +632,13 @@ export default class EmojiPicker extends React.PureComponent {
             }
         }
 
-        if (categoryComponents.length === 0) {
-            return (
-                <NoResultsIndicator
-                    variant={NoResultsVariant.ChannelSearch}
-                    titleValues={{channelName: `"${this.props.filter}"`}}
-                />);
-        }
+        // if (categoryComponents.length === 0) {
+        //     return (
+        //         <NoResultsIndicator
+        //             variant={NoResultsVariant.ChannelSearch}
+        //             titleValues={{channelName: `"${this.props.filter}"`}}
+        //         />);
+        // }
 
         return (
             <div
@@ -653,33 +653,34 @@ export default class EmojiPicker extends React.PureComponent {
             </div>
         );
     }
+
     emojiCurrentResultsItems = (categoryIndex, emojis, currentEmojiLoadedCount) => {
         const {cursor, emojisToShow} = this.state;
         let numEmojisLoaded = currentEmojiLoadedCount;
 
         return emojis.map((emoji, emojiIndex) => {
-            numEmojisLoaded++;
+            // numEmojisLoaded++;
 
             // set ref on first unloaded emoji
-            let ref;
-            if (numEmojisLoaded === emojisToShow) {
-                ref = this.lastVisibleEmojiRef;
-            }
-            if (numEmojisLoaded >= emojisToShow) {
-                return (
-                    <div
-                        key={numEmojisLoaded}
-                        className='emoji-picker__item'
-                        ref={ref}
-                    >
-                        <img
-                            alt={'emoji image'}
-                            src={imgTrans}
-                            className='emojisprite'
-                        />
-                    </div>
-                );
-            }
+            // let ref;
+            // if (numEmojisLoaded === emojisToShow) {
+            //     ref = this.lastVisibleEmojiRef;
+            // }
+            // if (numEmojisLoaded >= emojisToShow) {
+            //     return (
+            //         <div
+            //             key={numEmojisLoaded}
+            //             className='emoji-picker__item'
+            //             ref={ref}
+            //         >
+            //             <img
+            //                 alt={'emoji image'}
+            //                 src={imgTrans}
+            //                 className='emojisprite'
+            //             />
+            //         </div>
+            //     );
+            // }
             return (
                 <EmojiPickerItem
                     // eslint-disable-next-line react/no-array-index-key
@@ -692,7 +693,7 @@ export default class EmojiPicker extends React.PureComponent {
                     isSelected={cursor[0] === (categoryIndex) && cursor[1] === emojiIndex}
                     categoryIndex={categoryIndex}
                     emojiIndex={emojiIndex}
-                    containerRef={this.emojiPickerContainer}
+                    containerRef={this.emojiPickerContainerRef.current}
                     containerTop={this.state.divTopOffset}
                     containerBottom={this.state.divTopOffset + this.divHeight}
                 />
@@ -747,7 +748,13 @@ export default class EmojiPicker extends React.PureComponent {
                         onClick={this.handleCategoryClick}
                         onKeyDown={this.handleCategoryKeyDown}
                     />
-                    {this.emojiCurrentResults()}
+                    <EmojiPickerCurrentResults
+                        ref={this.emojiPickerContainerRef}
+                        filter={this.props.filter}
+                        categories={this.state.categories}
+                        allEmojis={this.state.allEmojis}
+                        recentEmojis={this.props.recentEmojis}
+                    />
                     <EmojiPickerPreview
                         emoji={this.getCurrentEmojiByCursor(this.state.cursor)}
                         customEmojisEnabled={this.props.customEmojisEnabled}

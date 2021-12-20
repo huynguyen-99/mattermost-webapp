@@ -3,6 +3,8 @@
 
 import React, {KeyboardEvent, memo, useMemo} from 'react';
 
+import {EmojiCategory} from 'mattermost-redux/types/emojis';
+
 import {RECENT_EMOJI_CATEGORY, CATEGORIES} from '../constants';
 
 import EmojiPickerCategory from './emoji_picker_category';
@@ -25,8 +27,8 @@ function EmojiPickerCategories({
     // change this
     // const currentCategoryName = filter ? categoryKeys[0] : categoryKeys[1];
 
-    const emojiPickerCategories = useMemo(() => Object.keys(categories).map((categoryName: string) => {
-        const category = categories[categoryName];
+    const emojiPickerCategories = useMemo(() => Object.keys(categories).map((categoryName) => {
+        const category = categories[categoryName as EmojiCategory];
 
         return (
             <EmojiPickerCategory
