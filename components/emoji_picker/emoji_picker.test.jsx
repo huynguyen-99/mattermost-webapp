@@ -115,7 +115,7 @@ describe('components/emoji_picker/EmojiPicker', () => {
         expect(wrapper.find(EmojiPickerCategorySection).find({categoryName: 'recent'}).length).toBe(1);
     });
 
-    test('Update should have for all categories', async () => {
+    test('Update should have for all categories', () => {
         const props = {
             ...baseProps,
             recentEmojis: [
@@ -123,7 +123,7 @@ describe('components/emoji_picker/EmojiPicker', () => {
             ],
         };
 
-        const wrapper = await shallow(
+        const wrapper = shallow(
             <EmojiPicker {...props}/>,
         );
 
