@@ -2,11 +2,11 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 
 import TeamInList
     from 'components/admin_console/permission_schemes_settings/permission_team_scheme_settings/team_in_list/team_in_list';
-import {TeamType} from 'mattermost-redux/types/teams';
+import { TeamType } from 'mattermost-redux/types/teams';
 
 describe('components/admin_console/permission_schemes_settings/permission_team_scheme_settings/team_in_list/team_in_list', () => {
     test('should match snapshot with team', () => {
@@ -21,7 +21,7 @@ describe('components/admin_console/permission_schemes_settings/permission_team_s
                 description: 'testTeam description',
                 email: 'test@team',
                 type: 'O' as TeamType,
-                company_name: 'mattermost',
+                company_name: 'PTN Global',
                 allowed_domains: '',
                 invite_id: '678',
                 allow_open_invite: true,
@@ -29,11 +29,11 @@ describe('components/admin_console/permission_schemes_settings/permission_team_s
                 group_constrained: true,
             },
             isDisabled: false,
-            onRemoveTeam: () => {},
+            onRemoveTeam: () => { },
         };
 
         const wrapper = shallow(
-            <TeamInList {...props}/>,
+            <TeamInList {...props} />,
         );
         expect(wrapper).toMatchSnapshot();
     });

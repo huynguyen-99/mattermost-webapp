@@ -4,18 +4,18 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
-import {Link} from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import { Link } from 'react-router-dom';
 
-import {UserProfile} from 'mattermost-redux/types/users';
-import {ServerError} from 'mattermost-redux/types/errors';
+import { UserProfile } from 'mattermost-redux/types/users';
+import { ServerError } from 'mattermost-redux/types/errors';
 
-import {isEmail} from 'mattermost-redux/utils/helpers';
+import { isEmail } from 'mattermost-redux/utils/helpers';
 
-import {trackEvent} from 'actions/telemetry_actions.jsx';
+import { trackEvent } from 'actions/telemetry_actions.jsx';
 import * as GlobalActions from 'actions/global_actions';
-import {browserHistory} from 'utils/browser_history';
-import Constants, {ValidationErrors} from 'utils/constants';
+import { browserHistory } from 'utils/browser_history';
+import Constants, { ValidationErrors } from 'utils/constants';
 import * as Utils from 'utils/utils.jsx';
 
 import logoImage from 'images/logo.png';
@@ -34,14 +34,14 @@ type TeamInviteInfo = {
 };
 
 export type Actions = {
-    createUser: (user: UserProfile, token: string, inviteId: string, redirect: string) => Promise<{data: UserProfile} | {error: ServerError}>;
-    loginById: (id: string, password: string, mfaToken?: string) => Promise<{data: boolean} | {error: ServerError}>;
-    setGlobalItem: (name: string, value: string) => {data: boolean};
-    getTeamInviteInfo: (inviteId: string) => Promise<{data: TeamInviteInfo} | {error: ServerError}>;
+    createUser: (user: UserProfile, token: string, inviteId: string, redirect: string) => Promise<{ data: UserProfile } | { error: ServerError }>;
+    loginById: (id: string, password: string, mfaToken?: string) => Promise<{ data: boolean } | { error: ServerError }>;
+    setGlobalItem: (name: string, value: string) => { data: boolean };
+    getTeamInviteInfo: (inviteId: string) => Promise<{ data: TeamInviteInfo } | { error: ServerError }>;
 };
 
 export type Props = {
-    location?: {search: string};
+    location?: { search: string };
     enableSignUpWithEmail: boolean;
     siteName?: string;
     termsOfServiceLink?: string;
@@ -96,7 +96,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         const token = (new URLSearchParams(this.props.location!.search)).get('t');
         const inviteId = (new URLSearchParams(this.props.location!.search)).get('id');
 
-        this.state = {loading: false};
+        this.state = { loading: false };
         if (token && token.length > 0) {
             this.state = this.getTokenData(token, data!);
         } else if (inviteId && inviteId.length > 0) {
@@ -116,7 +116,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
 
         this.setDocumentTitle(this.props.siteName!);
 
-        const {inviteId} = this.state;
+        const { inviteId } = this.state;
         if (inviteId && inviteId.length > 0) {
             this.getInviteInfo(inviteId);
         }
@@ -174,11 +174,11 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
     handleSignupSuccess = (user: UserProfile, data: UserProfile) => {
         trackEvent('signup', 'signup_user_02_complete');
         if (this.state.reminderInterval) {
-            trackEvent('signup', 'signup_from_reminder_' + this.state.reminderInterval, {user: user.id});
+            trackEvent('signup', 'signup_from_reminder_' + this.state.reminderInterval, { user: user.id });
         }
         const redirectTo = (new URLSearchParams(this.props.location!.search)).get('redirect_to');
 
-        this.props.actions.loginById(data.id, user.password, '').then((result: {data: boolean} | {error: ServerError}) => {
+        this.props.actions.loginById(data.id, user.password, '').then((result: { data: boolean } | { error: ServerError }) => {
             if ('error' in result) {
                 if (result.error.server_error_id === 'api.user.login.not_verified.app_error') {
                     let verifyUrl = '/should_verify_email?email=' + encodeURIComponent(user.email);
@@ -200,7 +200,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
             }
 
             if (this.state.token && this.state.token.length > 0) {
-                this.props.actions.setGlobalItem(this.state.token, JSON.stringify({usedBefore: true}));
+                this.props.actions.setGlobalItem(this.state.token, JSON.stringify({ usedBefore: true }));
             }
 
             if (redirectTo) {
@@ -216,7 +216,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         if (!providedEmail) {
             this.setState({
                 nameError: '',
-                emailError: (<FormattedMessage id='signup_user_completed.required'/>),
+                emailError: (<FormattedMessage id='signup_user_completed.required' />),
                 passwordError: '',
                 serverError: '',
             });
@@ -226,7 +226,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         if (!isEmail(providedEmail)) {
             this.setState({
                 nameError: '',
-                emailError: (<FormattedMessage id='signup_user_completed.validEmail'/>),
+                emailError: (<FormattedMessage id='signup_user_completed.validEmail' />),
                 passwordError: '',
                 serverError: '',
             });
@@ -236,7 +236,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         const providedUsername = this.nameRef.current?.value.trim().toLowerCase();
         if (!providedUsername) {
             this.setState({
-                nameError: (<FormattedMessage id='signup_user_completed.required'/>),
+                nameError: (<FormattedMessage id='signup_user_completed.required' />),
                 emailError: '',
                 passwordError: '',
                 serverError: '',
@@ -249,7 +249,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
             let errObj;
             if (usernameError.id === ValidationErrors.RESERVED_NAME) {
                 errObj = {
-                    nameError: (<FormattedMessage id='signup_user_completed.reserved'/>),
+                    nameError: (<FormattedMessage id='signup_user_completed.reserved' />),
                     emailError: '',
                     passwordError: '',
                     serverError: '',
@@ -275,7 +275,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         }
 
         const providedPassword = this.passwordRef.current?.value ?? '';
-        const {valid, error} = Utils.isValidPassword(providedPassword, this.props.passwordConfig);
+        const { valid, error } = Utils.isValidPassword(providedPassword, this.props.passwordConfig);
         if (!valid && error) {
             this.setState({
                 nameError: '',
@@ -316,7 +316,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
 
             const redirectTo = (new URLSearchParams(this.props.location!.search)).get('redirect_to');
 
-            this.props.actions.createUser(user, this.state.token as string, this.state.inviteId as string, redirectTo as string).then((result: {data: UserProfile} | {error: ServerError}) => {
+            this.props.actions.createUser(user, this.state.token as string, this.state.inviteId as string, redirectTo as string).then((result: { data: UserProfile } | { error: ServerError }) => {
                 if ('error' in result) {
                     this.setState({
                         serverError: result.error.message,
@@ -514,7 +514,7 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
         }
 
         if (this.state.loading) {
-            return (<LoadingScreen/>);
+            return (<LoadingScreen />);
         }
 
         let emailSignup;
@@ -547,10 +547,11 @@ export default class SignupEmail extends React.PureComponent<Props, State> {
 
         return (
             <div>
-                {hasAccounts && <BackButton onClick={() => trackEvent('signup_email', 'click_back')}/>}
+                {hasAccounts && <BackButton onClick={() => trackEvent('signup_email', 'click_back')} />}
                 <div
                     id='signup_email_section'
                     className='col-sm-12'
+                    style="background-color: #5f9ea0;"
                 >
                     <div className='signup-team__container padding--less'>
                         <img
